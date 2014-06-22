@@ -98,6 +98,44 @@ class Parser(object):
 		stack.Add(op);
 		return None;
 		
+	#Statements
+	@pg.production("string : ELSEIF OPEN_PAREN NUMBER CONDITIONAL NUMBER CLOSED_PAREN")
+	@pg.production("string : ELSEIF OPEN_PAREN ATOM CONDITIONAL ATOM CLOSED_PAREN")
+	@pg.production("string : ELSEIF OPEN_PAREN ATOM CONDITIONAL NUMBER CLOSED_PAREN") #Work on this
+	@pg.production("string : ELSEIF OPEN_PAREN NUMBER CONDITIONAL ATOM CLOSED_PAREN") #Work on this
+	@pg.production("string : IF OPEN_PAREN NUMBER CONDITIONAL NUMBER CLOSED_PAREN")
+	@pg.production("string : IF OPEN_PAREN ATOM CONDITIONAL ATOM CLOSED_PAREN")
+	@pg.production("string : IF OPEN_PAREN ATOM CONDITIONAL NUMBER CLOSED_PAREN") #Work on this
+	@pg.production("string : IF OPEN_PAREN NUMBER CONDITIONAL ATOM CLOSED_PAREN") #Work on this
+	@pg.production("string : IF OPEN_PAREN ATOM ATOM ATOM CLOSED_PAREN") #Work on this
+	@pg.production("string : IF OPEN_PAREN NUMBER ATOM NUMBER CLOSED_PAREN") #Work on this
+	@pg.production("string : IF OPEN_PAREN ATOM ATOM NUMBER CLOSED_PAREN") #Work on this
+	@pg.production("string : IF OPEN_PAREN NUMBER ATOM ATOM CLOSED_PAREN") #Work on this
+	@pg.production("string : IF OPEN_PAREN NUMBER EQUAL EQUAL ATOM CLOSED_PAREN") #Work on this
+	@pg.production("string : IF OPEN_PAREN NUMBER EQUAL EQUAL NUMBER CLOSED_PAREN") #Work on this
+	@pg.production("string : IF OPEN_PAREN ATOM EQUAL EQUAL ATOM CLOSED_PAREN") #Work on this
+	@pg.production("string : IF OPEN_PAREN ATOM EQUAL EQUAL NUMBER CLOSED_PAREN") #Work on this
+	#Add if( x in y ) or just x in y: without if. Add support for strings. String in x etc.
+	def if_op(p):
+		x = p[2].getstr();
+		y = p[3].getstr();
+		z = p[4].getstr();
+		b = p[5].getstr();
+		x_ = None;
+		y_ = None;
+		z_ = None;
+		op = None;
+		x_isvar = None;
+		if(p[0].gettokentype() == "IF"):
+			if(p[3].getstr() == "="):
+				op = "IF(" + str(x) + "," + str(y) + str(z) + "," + str(b) + ")";
+			else:
+				op = "IF(" + str(x) + "," + str(y) + "," + str(z) + ")";
+		elif(p[0].gettokentype() == "ELSEIF"):
+			op = "ELSEIF(" + str(x) + "," + str(y) + "," + str(z) + ")";
+		stack.Add(op);
+		return None;
+		
 	parser = pg.build()
 	def parse(self, statements):
 		for statement in statements:

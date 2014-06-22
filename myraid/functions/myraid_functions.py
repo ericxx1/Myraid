@@ -6,9 +6,43 @@ import myraid_print
 from myraid.memory import memory
 
 #stack = Parser.stack
+
+def eval(x, y, z):
+	if y == "<":
+		return x < z
+	elif y == ">":
+		return x > z
+	elif y == ">=":
+		return x >= z
+	elif y == "<=":
+		return x <= z
+	elif y == "==":
+		return x == z
+	else:
+		assert False, "Unknown comparison operator: %s" % y
+def IF(args):
+	x = args[0]
+	y = args[1]
+	z = args[2]
+	if x.find('"') != -1:
+		x = x
+	elif(x.isdigit()):
+		x = x
+	else:
+		x = mem.Select(x)
+	if z.find('"') != -1:
+		z =z 
+	elif(z.isdigit()):
+		z = z
+	else:
+		z = mem.Select(z)
+	ev = eval(x, y, z)
+	if str(ev) == "1":
+		print "True"
+	else:
+		print "False"
+	#return eval(str(x) + str(conditional) + str(y))
 """
-def IF(x, conditional, y):
-	return eval(str(x) + str(conditional) + str(y))
 def ELSE_IF(x, conditional, y):
 	return eval(str(x) + str(conditional) + str(y))
 def ELSE():

@@ -7,7 +7,8 @@ class Compiler():
 	"SOCKET_CONNECT" : myraid_functions.CONNECT_SOCKET,
 	"CREATE_SOCKET_SERVER" : myraid_functions.CREATE_SOCKET_SERVER,
 	"SOCKET_SEND" : myraid_functions.SEND_TO_SOCKET,
-	"VAR" : myraid_functions.VAR
+	"VAR" : myraid_functions.VAR,
+	"IF": myraid_functions.IF
 	}
 	def splitter(statement):
 		values = [];
