@@ -1,8 +1,10 @@
 #make these functions except lists and turn the list values to what it needs. Example: name = list[0]; host = list[1]; port = list[2];
+from rpython.rlib import rsocket
+from rpython.rlib.rsocket import *
 import os
-import myraid_socket
 import myraid_print
 from myraid.memory import memory
+
 #stack = Parser.stack
 """
 def IF(x, conditional, y):
@@ -19,6 +21,9 @@ def WHILE(a=1, b=">", c=0):
 	else:
 		return False;
 """
+global sockets
+sockets = memory.Sockets();
+
 global mem
 mem = memory.Memory()
 def INT():
@@ -50,7 +55,9 @@ def LOAD():
 def CREATE_SOCKET(args):
 	try:
 		name = args[0]
-		myraid_socket.create_socket(name)
+		myraid_socket = RSocket(AF_INET, SOCK_STREAM);
+		sockets.Add(name, myraid_socket);
+		print "Socket " + name + "created " + str(sockets.Select(name));
 	except Exception as e:
 		ERROR(e)
 	return None;
@@ -63,7 +70,17 @@ def CONNECT_SOCKET(args):
 		name = args[0]
 		host = args[1]
 		port = args[2]
-		myraid_socket.connect_socket(name, host, port)
+		print name
+		print "Name:" + name + "," + host + "," + port
+		myraid_socket = sockets.Select(name);
+		#myraid_socket = sockets.Socket_list[name]
+		try:
+			addr = INETAddress(host, int(port))
+			myraid_socket.connect(addr)
+			print "Connected to " + host;
+		except(rsocket.SocketError):
+			print "Could not connect to " + host;
+			pass	
 	except Exception as e:
 		ERROR(e)
 	return None;
@@ -73,7 +90,8 @@ def SEND_TO_SOCKET(args):
 	try:
 		name = args[0]
 		to_send = args[1]
-		myraid_socket.send_to_socket(name, to_send)
+		myraid_socket = sockets.Select(name);
+		myraid_socket.send(to_send.strip('"'));
 	except Exception as e:
 		ERROR(e)
 	return None;

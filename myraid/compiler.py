@@ -6,7 +6,7 @@ class Compiler():
 	"CREATE_SOCKET" : myraid_functions.CREATE_SOCKET, #Ask simpson how to make it so it only asks for args upon execution like in his example;
 	"SOCKET_CONNECT" : myraid_functions.CONNECT_SOCKET,
 	"CREATE_SOCKET_SERVER" : myraid_functions.CREATE_SOCKET_SERVER,
-	"SEND_TO_SERVER" : myraid_functions.SEND_TO_SOCKET,
+	"SOCKET_SEND" : myraid_functions.SEND_TO_SOCKET,
 	"VAR" : myraid_functions.VAR
 	}
 	def splitter(statement):
@@ -27,19 +27,26 @@ class Compiler():
 					if value == values[0]:
 						f1 = value
 						f0, f1 = rstring.split(f1, "(")
+						f1 = f1.strip(")")
 						#_values.append(f0)
 						_values.append(f1)
-				elif value.startswith("("):
-					value = value[1:]
-					_values.append(value);
-				
-				elif value.endswith(")"):
-					value = value[:-1]
-					_values.append(value);
 				else:
-					_values.append(value)
+					_values.append(value.strip(")"))
+				#elif value.startswith("("):
+				#	value = value[1:]
+				#	_values.append(value);
+				#
+				#elif value.endswith(")"):
+				#	value = value[:-1]
+				#	_values.append(value);
+				#else:
+				#	_values.append(value)
 		else:
-			_values.append(statement);
+			f1 = statement
+			f0, f1 = rstring.split(f1, "(")
+			f1 = f1.strip(")")
+			#_values.append(f0)
+			_values.append(f1)
 		return _values
 
 	def compile(self, stack):
