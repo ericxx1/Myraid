@@ -1,0 +1,4 @@
+from myraid.memory import memory
+mem = memory.Memory()
+mem.Add("dick", "1")
+print mem.Select("dick")

@@ -1,0 +1,44 @@
+Grammer for Myraid:
+-----------------------------
+How each statement is defined
+-----------------------------
+Comment: //Anything inbetween 2 sets of double slashes is a comment//
+
+Variable: var x = x;
+
+Integer: int x = num;
+
+Operators: + - / * || && ^ % 
+
+Condition: < > =< => != = == ===
+
+Array: array x = [];
+
+Statment: if(), else(), else if(), while(), do(), for()
+
+Expression: in 
+
+Function: 
+def x(): 
+    //Do stuff
+end
+
+Object: x(); //Anything that is callable or can have something called on it//
+        x.n();
+
+Class:
+class Test(arg):
+    //Do stuff
+end
+
+Socket:
+New Socket("Test"):
+    Test.connect("host", port)
+    Test.send("Hello")
+    Test.recv(int) //You can also set a maximum *//
+end
+
+Print: print "Hello, World!";
+
+
+

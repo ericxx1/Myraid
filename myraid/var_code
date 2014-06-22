@@ -1,0 +1,17 @@
+		if(p[0].getstr() == ("var" or "Var")):
+			var_name = str(p[1].getstr())
+			if p[3].gettokentype() == "STRING":
+				value = p[3].getstr().strip('"')
+				print ":"+var_name
+				mem.Add(var_name, value)
+			elif p[3].gettokentype() == "NUMBER":
+				value = p[3].getstr().strip('"')			
+				mem.Add(var_name, value)
+			elif p[3].gettokentype() == "ATOM":
+				print "Var name: " + var_name
+				print mem.Select(str(p[3].getstr()))
+				value = mem.Select(str(p[3].getstr()))
+				mem.Add(var_name, value)
+			else:
+				value = p[3].getstr()
+				mem.Add(var_name, value)
