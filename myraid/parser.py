@@ -1,4 +1,4 @@
-from rply import ParserGenerator, LexerGenerator, ParsingError
+from rply import ParserGenerator, LexerGenerator, ParsingError, token
 from myraid import lexer
 from myraid.memory import memory
 from myraid.BaseBox import Boxes
@@ -14,6 +14,8 @@ class Parser(object):
 	@pg.production("main : string")
 	@pg.production("main : expr")
 	@pg.production("main : variable")
+	@pg.production("main : conditional")
+	@pg.production("main : conditionals")
 	def main(p):
 	    # p is a list, of each of the pieces on the right hand side of the
 	    # grammar rule
@@ -97,43 +99,85 @@ class Parser(object):
 		op = "SOCKET_RECV(" + name + "," + bytes_per_chunk + ")"
 		stack.Add(op);
 		return None;
-		
-	#Statements
-	@pg.production("string : ELSEIF OPEN_PAREN NUMBER CONDITIONAL NUMBER CLOSED_PAREN")
-	@pg.production("string : ELSEIF OPEN_PAREN ATOM CONDITIONAL ATOM CLOSED_PAREN")
-	@pg.production("string : ELSEIF OPEN_PAREN ATOM CONDITIONAL NUMBER CLOSED_PAREN") #Work on this
-	@pg.production("string : ELSEIF OPEN_PAREN NUMBER CONDITIONAL ATOM CLOSED_PAREN") #Work on this
-	@pg.production("string : IF OPEN_PAREN NUMBER CONDITIONAL NUMBER CLOSED_PAREN")
-	@pg.production("string : IF OPEN_PAREN ATOM CONDITIONAL ATOM CLOSED_PAREN")
-	@pg.production("string : IF OPEN_PAREN ATOM CONDITIONAL NUMBER CLOSED_PAREN") #Work on this
-	@pg.production("string : IF OPEN_PAREN NUMBER CONDITIONAL ATOM CLOSED_PAREN") #Work on this
-	@pg.production("string : IF OPEN_PAREN ATOM ATOM ATOM CLOSED_PAREN") #Work on this
-	@pg.production("string : IF OPEN_PAREN NUMBER ATOM NUMBER CLOSED_PAREN") #Work on this
-	@pg.production("string : IF OPEN_PAREN ATOM ATOM NUMBER CLOSED_PAREN") #Work on this
-	@pg.production("string : IF OPEN_PAREN NUMBER ATOM ATOM CLOSED_PAREN") #Work on this
-	@pg.production("string : IF OPEN_PAREN NUMBER EQUAL EQUAL ATOM CLOSED_PAREN") #Work on this
-	@pg.production("string : IF OPEN_PAREN NUMBER EQUAL EQUAL NUMBER CLOSED_PAREN") #Work on this
-	@pg.production("string : IF OPEN_PAREN ATOM EQUAL EQUAL ATOM CLOSED_PAREN") #Work on this
-	@pg.production("string : IF OPEN_PAREN ATOM EQUAL EQUAL NUMBER CLOSED_PAREN") #Work on this
+	
+	@pg.production("conditional : ATOM CONDITIONAL ATOM")
+	@pg.production("conditional : ATOM CONDITIONAL NUMBER")
+	@pg.production("conditional : NUMBER CONDITIONAL ATOM")
+	@pg.production("conditional : NUMBER CONDITIONAL NUMBER")
+	def conditional(p):
+		for value in p:
+			value = value.getstr()
+			print value
+		return Boxes.BoxArray(p);
+	
+	@pg.production("conditionals : conditional")
+	def conditionals(p):
+		print "Single conditional"
+		conditional = p[0]
+		assert isinstance(conditional, Boxes.BoxArray)
+		p = Boxes.BoxArray.getArray(conditional)
+		p_ = []
+		print p
+		return Boxes.BoxArray(p);
+					
+	@pg.production("conditionals : conditionals CONDITIONAL conditional")
+	def conditionals(p):
+		print "Conditionals CONDITIONAL conditional"
+		print p
+		p_ = []
+		conditional1 = p[0]
+		conditional2 = p[2]
+		condition = p[1]
+		assert isinstance(conditional1, Boxes.BoxArray)
+		conditional1 = Boxes.BoxArray.getArray(conditional1)
+		for value in conditional1:
+			p_.append(value)
+		p_.append(condition)
+		assert isinstance(conditional2, Boxes.BoxArray)
+		conditional2 = Boxes.BoxArray.getArray(conditional2)
+		for value in conditional2:
+			p_.append(value)
+		print p_
+		return Boxes.BoxArray(p_);
+	
 	#Add if( x in y ) or just x in y: without if. Add support for strings. String in x etc.
+	#Statements
+	@pg.production("conditionals : IF conditional")
+	@pg.production("conditionals : IF OPEN_PAREN conditional CLOSED_PAREN")
+	@pg.production("conditionals : IF OPEN_PAREN conditionals CLOSED_PAREN")
+	@pg.production("conditionals : ELSEIF OPEN_PAREN conditionals CLOSED_PAREN")
+	@pg.production("conditionals : IF conditionals")
+	@pg.production("conditionals : ELSEIF conditionals")
 	def if_op(p):
-		x = p[2].getstr();
-		y = p[3].getstr();
-		z = p[4].getstr();
-		b = p[5].getstr();
-		x_ = None;
-		y_ = None;
-		z_ = None;
-		op = None;
-		x_isvar = None;
-		if(p[0].gettokentype() == "IF"):
-			if(p[3].getstr() == "="):
-				op = "IF(" + str(x) + "," + str(y) + str(z) + "," + str(b) + ")";
-			else:
-				op = "IF(" + str(x) + "," + str(y) + "," + str(z) + ")";
-		elif(p[0].gettokentype() == "ELSEIF"):
-			op = "ELSEIF(" + str(x) + "," + str(y) + "," + str(z) + ")";
+		print "if statement"
+		if p[1].getstr() == "(":
+			conditions = p[2]
+			assert isinstance(conditions, Boxes.BoxArray)
+			conditions = Boxes.BoxArray.getArray(conditions)
+			statement = ""
+			for value in conditions:
+				value = value.getstr()
+				statement += value+","
+			statement = statement[:-1]
+			op = p[0].getstr().upper() + "(" + statement + ")"
+			stack.Add(op);
+		else:
+			conditions = p[1]
+			assert isinstance(conditions, Boxes.BoxArray)
+			conditions = Boxes.BoxArray.getArray(conditions)
+			statement = ""
+			for value in conditions:
+				value = value.getstr()
+				statement += value+","
+			statement = statement[:-1]
+			op = p[0].getstr().upper() + "(" + statement + ")"
 		stack.Add(op);
+		return None;
+		
+	@pg.production("string : ELSE")
+	def else_op(p):
+		print "else op"
+		stack.Add("ELSE")
 		return None;
 		
 	parser = pg.build()

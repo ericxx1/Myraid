@@ -14,4 +14,9 @@ class BoxStr(BaseBox):
     def get_str(self):
         return self.value
         
-
+class BoxArray(BaseBox):
+	def __init__(self, value):
+		self.value = value
+		
+	def getArray(self):
+		return self.value

@@ -42,11 +42,10 @@ def IF(args):
 	else:
 		print "False"
 	#return eval(str(x) + str(conditional) + str(y))
+def ELSE(self):
+	print "True"
+	return None;
 """
-def ELSE_IF(x, conditional, y):
-	return eval(str(x) + str(conditional) + str(y))
-def ELSE():
-	return True;
 def WHILE(a=1, b=">", c=0):
 	if(a is True):
 		return True;
@@ -61,8 +60,8 @@ sockets = memory.Sockets();
 global mem
 mem = memory.Memory()
 def INT():
-	return None;
-def VAR(args):
+	return None; #Add a math module for support for mathematical calculations via this recrusive math statement defined below.
+def VAR(args): #Add addition subtraction etc support. Create a recursive statement such as the conditional statement to do such a thing. or perhaps just use the conditional statement for it. 
 	print args
 	try:
 		var_name = args[0]
@@ -71,6 +70,9 @@ def VAR(args):
 		if '"' in value: #FIX DIS
 			print "Added Variable"
 			mem.Add(var_name, value)
+		elif value.isdigit():
+			print "Added Variable"
+			mem.Add(var_name, value)	
 		else:
 			value = mem.Select(value)
 			value = value.strip('"')

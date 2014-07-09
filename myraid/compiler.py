@@ -8,7 +8,9 @@ class Compiler():
 	"CREATE_SOCKET_SERVER" : myraid_functions.CREATE_SOCKET_SERVER,
 	"SOCKET_SEND" : myraid_functions.SEND_TO_SOCKET,
 	"VAR" : myraid_functions.VAR,
-	"IF": myraid_functions.IF
+	"IF": myraid_functions.IF,
+	"ELSEIF": myraid_functions.IF,
+	"ELSE": myraid_functions.ELSE
 	}
 	def splitter(statement):
 		values = [];
@@ -44,8 +46,9 @@ class Compiler():
 				#	_values.append(value)
 		else:
 			f1 = statement
-			f0, f1 = rstring.split(f1, "(")
-			f1 = f1.strip(")")
+			if "(" in f1:
+				f0, f1 = rstring.split(f1, "(")
+				f1 = f1.strip(")")
 			#_values.append(f0)
 			_values.append(f1)
 		return _values
