@@ -7,6 +7,5 @@ No where near ready. Just putting my ideas down.
 <hr>
 NOTICE:
 <hr>
-This is strictly still in development. 
-Nothing actually runs.
-The functions are only put into the stack.
+This is strictly still in development. I recommend you wait until a stable version is released.
+
